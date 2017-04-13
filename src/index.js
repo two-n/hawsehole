@@ -26,6 +26,8 @@ export default class Hawsehole extends React.PureComponent {
     anchors: [],
   }
 
+  id = Math.random()
+
   anchorYOffset(anchor) {
     const node = select(findDOMNode(this)).select(`a[name='${anchor}']`).node();
     return node && (window.pageYOffset + node.getBoundingClientRect().top);
@@ -40,7 +42,7 @@ export default class Hawsehole extends React.PureComponent {
       }
     }
 
-    transition().tween('scroll', () => {
+    select(findDOMNode(node)).transition().tween('scroll', () => {
       const i = interpolate(window.pageYOffset, this.anchorYOffset(anchor) - offset);
       return t => { window.scrollTo(0, i(t)) };
     });
@@ -105,14 +107,14 @@ export default class Hawsehole extends React.PureComponent {
     };
 
     handleURLChange();
-    select(window).on(`hashchange.${this.ns = Math.random()}`, () => {
+    select(window).on(`hashchange.${this.id}`, () => {
       handleURLChange();
       d3Event.preventDefault();
     });
     window.history.scrollRestoration = 'manual';
   }
   disconnectHash() {
-    select(window).on(`hashchange.${this.ns}`, null);
+    select(window).on(`hashchange.${this.id}`, null);
     window.history.scrollRestoration = 'auto';
   }
 
