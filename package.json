@@ -1,0 +1,51 @@
+{
+  "name": "hawsehole",
+  "version": "0.1.0",
+  "description": "React component for navigation and transitions among named anchors",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel-register",
+    "build": "babel src -d dist",
+    "watch": "babel -w src -d dist",
+    "prepublish": "npm run build"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/two-n/hawsehole.git"
+  },
+  "homepage": "https://github.com/two-n/hawsehole",
+  "bugs": "https://github.com/two-n/hawsehole/issues",
+  "dependencies": {
+    "d3-array": "^1.1.1",
+    "d3-interpolate": "^1.1.4",
+    "d3-selection": "^1.0.5",
+    "d3-timer": "^1.0.5",
+    "d3-transition": "^1.0.4",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-plugin-transform-class-properties": "^6.8.0",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-register": "^6.9.0",
+    "chai": "^3.5.0",
+    "enzyme": "^2.4.1",
+    "jsdom": "^9.4.1",
+    "mocha": "^2.5.3",
+    "react-addons-test-utils": "15"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-react-jsx",
+      "transform-object-rest-spread",
+      "transform-class-properties"
+    ]
+  }
+}
