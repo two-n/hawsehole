@@ -39,6 +39,13 @@ render(
 , document.getElementById('container'));
 ```
 
-Planned features:
+## Planned features
+
 - scrolling to anchor on demand via prop
 - optionally replacing hash with scrolled anchor, as well as clicked nav option
+- hierarchical nav corresponding to HTML heading levels if present
+- support `id`'ed elements
+
+## References
+
+- `scroll-behavior: smooth;` [browser support](http://caniuse.com/#search=scroll-behavior)

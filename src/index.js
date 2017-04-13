@@ -37,8 +37,8 @@ export default class Hawsehole extends React.PureComponent {
 
   id = Math.random()
 
-  anchorYOffset(anchor) {
-    const node = select(findDOMNode(this)).select(`a[name='${anchor}']`).node();
+  anchorYOffset({ name }) {
+    const node = select(findDOMNode(this)).select(`a[name='${name}']`).node();
     return node && (window.pageYOffset + node.getBoundingClientRect().top);
   }
 
@@ -53,12 +53,12 @@ export default class Hawsehole extends React.PureComponent {
 
     const { duration, ease, delay } = this.props,
           before = window.pageYOffset,
-          after = this.anchorYOffset(anchor) - offset,
+          after = this.anchorYOffset({ name: anchor }) - offset,
           interpolator = interpolate(before, after);
     const transition = select(findDOMNode(this)).transition()
       .duration(typeof duration === 'function' ? duration(before, after) : duration)
-      .delay(typeof delay === 'function' ? delay(before, after) : delay)
-    if (ease) transition.ease(ease)
+      .delay(typeof delay === 'function' ? delay(before, after) : delay);
+    if (ease) transition.ease(ease);
     transition.tween('scroll', () => t => { window.scrollTo(0, interpolator(t)) });
   }
 
@@ -66,20 +66,20 @@ export default class Hawsehole extends React.PureComponent {
     const end = window.pageYOffset + findDOMNode(this).getBoundingClientRect().bottom,
           anchorYOffsets = [ ...this.state.anchors.map(this.anchorYOffset.bind(this)), end ],
           index = bisect(anchorYOffsets, window.pageYOffset + this.props.offset + 1) - 1,
-          current = this.state.anchors[index],
+          current = (this.state.anchors[index] || {}).name,
           top = Math.abs(window.pageYOffset + this.props.offset - anchorYOffsets[index]) < 1;
     if (current !== this.state.current || top !== this.state.top) {
-      this.setState({ current, top })
+      this.setState({ current, top });
     }
   }
 
   findAnchors() {
     this.setState({
       anchors:
-        select(findDOMNode(this))
-          .selectAll('a[name]')
-          .nodes()
-          .map(node => select(node).attr('name'))
+        select(findDOMNode(this)).selectAll('a[name]').nodes().map(node => ({
+          name: node.getAttribute('name'),
+          text: node.textContent,
+        }))
     });
   }
 
@@ -154,15 +154,15 @@ export default class Hawsehole extends React.PureComponent {
       <Nav>
         <ul>{
           anchors.map(anchor =>
-            <li key={anchor}>
+            <li key={anchor.name}>
               <a
-                href={`#${anchor}`}
-                className={anchor === current ? currentClassName : '' }
+                href={`#${anchor.name}`}
+                className={anchor.name === current ? currentClassName : '' }
                 onClick={event => {
-                  this.transitionScrollTo(anchor, offset, hash === 'push');
+                  this.transitionScrollTo(anchor.name, offset, hash === 'push');
                   event.preventDefault();
                 }}
-              >{anchor}</a>
+              >{anchor.text}</a>
             </li>
           )
         }</ul>
