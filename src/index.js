@@ -1,7 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { select, event as d3Event } from 'd3-selection';
-import { transition } from 'd3-transition';
+import 'd3-transition';
 import { interpolate } from 'd3-interpolate';
 import { bisect } from 'd3-array';
 import { timer } from 'd3-timer';
@@ -14,6 +14,10 @@ export default class Hawsehole extends React.PureComponent {
     hash: false,
     currentClassName: 'current',
     topClassName: 'top',
+
+    delay: 0,
+    duration: (a, b) => Math.pow(Math.abs(a - b), 0.75) + 300,
+    ease: null,
 
     component: 'div',
     className: null,
@@ -42,10 +46,15 @@ export default class Hawsehole extends React.PureComponent {
       }
     }
 
-    select(findDOMNode(node)).transition().tween('scroll', () => {
-      const i = interpolate(window.pageYOffset, this.anchorYOffset(anchor) - offset);
-      return t => { window.scrollTo(0, i(t)) };
-    });
+    const { duration, ease, delay } = this.props,
+          before = window.pageYOffset,
+          after = this.anchorYOffset(anchor) - offset,
+          interpolator = interpolate(before, after);
+    const transition = select(findDOMNode(this)).transition()
+      .duration(typeof duration === 'function' ? duration(before, after) : duration)
+      .delay(typeof delay === 'function' ? delay(before, after) : delay)
+    if (ease) transition.ease(ease)
+    transition.tween('scroll', () => t => { window.scrollTo(0, interpolator(t)) });
   }
 
   handleScroll() {

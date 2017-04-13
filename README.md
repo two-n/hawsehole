@@ -18,11 +18,18 @@ import Hawsehole from 'hawsehole';
                               // and corresponding nav li
   topClassName="top"  // class also assigned to current anchor if at viewport top
 
-  component="div"  // Container component
+  // Scroll transition:
+  delay={0}
+  duration={(a, b) => Math.pow(Math.abs(a - b), 0.75) + 300}  // (in ms)
+  // Note: if function passed for duration or delay, receives scroll position before and after as arguments
+  ease={null}  // defaults to D3's default easing
+
+  // Container component:
+  component="div"
   className={null}  // Passed along to container
   style={null}  // Passed along to container
-
 >
+
   {/* Example: */}
   <a name="constitution"><h1>The Constitution of the United States</h1></a>
 
