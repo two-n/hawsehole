@@ -9,19 +9,24 @@ import { timer } from 'd3-timer';
 export default class Hawsehole extends React.PureComponent {
 
   static defaultProps = {
-    navComponent: 'nav',
-    offset: 0,
-    hash: false,
-    currentClassName: 'current',
-    topClassName: 'top',
+    hash: false,  // true to enable read and write URL hash,
+                  // or 'push' to also enable pushState on nav click
+    navComponent: 'nav',  // tag or React component to wrap nav, or null for no nav
+    offset: 0,  // offset (in px) from anchor top
+    currentClassName: 'current',  // class assigned to prominent anchor in viewport,
+                                  // and corresponding nav li
+    topClassName: 'top',  // class also assigned to current anchor if at viewport top
 
+    // Scroll transition:
     delay: 0,
-    duration: (a, b) => Math.pow(Math.abs(a - b), 0.75) + 300,
-    ease: null,
+    duration: (a, b) => Math.pow(Math.abs(a - b), 0.75) + 300,  // (in ms)
+      // Note: if function passed for duration or delay,
+      // receives scroll position before and after as arguments
+    ease: null,  // defaults to D3's default easing
 
-    component: 'div',
-    className: null,
-    style: null,
+    // Container component:
+    component: 'div',  // tag or React component to wrap nav component and children
+    className: null, style: null,  // Passed along to container
   }
 
   state = {
