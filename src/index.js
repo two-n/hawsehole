@@ -9,24 +9,45 @@ import { timer } from 'd3-timer';
 export default class Hawsehole extends React.PureComponent {
 
   static defaultProps = {
-    hash: false,  // true to enable read and write URL hash,
-                  // or 'push' to also enable pushState on nav click
-    navComponent: 'nav',  // tag or React component to wrap nav, or null for no nav
-    offset: 0,  // offset (in px) from anchor top
-    currentClassName: 'current',  // class assigned to prominent anchor in viewport,
-                                  // and corresponding nav li
-    topClassName: 'top',  // class also assigned to current anchor if at viewport top
 
-    // Scroll transition:
-    delay: 0,
+    // Set to true to enable reading and writing URL hash,
+    // or to 'push' to also enable pushState on nav click
+    hash: false,
+
+    // Tag or React component to wrap nav, or null for no nav
+    navComponent: 'nav',
+
+    // Class assigned to prominent anchor in viewport, and corresponding nav li
+    currentClassName: 'current',
+
+    // Class also assigned to current anchor if at viewport top
+    topClassName: 'top',
+
+    // Function for computing each anchor node's document offset
+    anchorTop: node => node.getBoundingClientRect().top + window.pageYOffset,
+
+
+    /*
+     * Scroll transition
+     */
+
+    // If function passed for duration or delay, receives scroll position before and after as arguments
+    delay: 0,  // (in ms)
     duration: (a, b) => Math.pow(Math.abs(a - b), 0.75) + 300,  // (in ms)
-      // Note: if function passed for duration or delay,
-      // receives scroll position before and after as arguments
     ease: null,  // defaults to D3's default easing
 
-    // Container component:
-    component: 'div',  // tag or React component to wrap nav component and children
-    className: null, style: null,  // Passed along to container
+
+    /*
+     * Container component
+     */
+
+    // Tag or React component to wrap nav component and children
+    component: 'div',
+
+    // Passed along to container
+    className: null,
+    style: null,
+
   }
 
   state = {
@@ -39,21 +60,24 @@ export default class Hawsehole extends React.PureComponent {
 
   anchorYOffset({ name }) {
     const node = select(findDOMNode(this)).select(`a[name='${name}']`).node();
-    return node && (window.pageYOffset + node.getBoundingClientRect().top);
+    return node && this.props.anchorTop(node);
   }
 
-  transitionScrollTo(anchor, offset = 0, push = false) {
-    if (this.props.hash) {
-      if (window.history[push ? 'pushState' : 'replaceState'] != null) {
-        window.history[push ? 'pushState' : 'replaceState']({}, "", `#${anchor}`);
+  transitionScrollTo(anchor, active = false) {
+    const { hash, offset, duration, ease, delay } = this.props;
+
+    if (!anchor) return;
+
+    if (hash) {
+      if (window.history[active ? 'pushState' : 'replaceState'] != null) {
+        window.history[active ? 'pushState' : 'replaceState']({}, "", `#${anchor}`);
       } else {
-        window.location[push ? 'assign' : 'replace'](`#${anchor}`);
+        window.location[active ? 'assign' : 'replace'](`#${anchor}`);
       }
     }
 
-    const { duration, ease, delay } = this.props,
-          before = window.pageYOffset,
-          after = this.anchorYOffset({ name: anchor }) - offset,
+    const before = window.pageYOffset,
+          after = this.anchorYOffset({ name: anchor }),
           interpolator = interpolate(before, after);
     const transition = select(findDOMNode(this)).transition()
       .duration(typeof duration === 'function' ? duration(before, after) : duration)
@@ -63,11 +87,11 @@ export default class Hawsehole extends React.PureComponent {
   }
 
   handleScroll() {
-    const end = window.pageYOffset + findDOMNode(this).getBoundingClientRect().bottom,
-          anchorYOffsets = [ ...this.state.anchors.map(this.anchorYOffset.bind(this)), end ],
-          index = bisect(anchorYOffsets, window.pageYOffset + this.props.offset + 1) - 1,
+    const anchorYOffsets = this.state.anchors.map(this.anchorYOffset.bind(this)),
+          end = window.pageYOffset + findDOMNode(this).getBoundingClientRect().bottom,
+          index = bisect([ ...anchorYOffsets, end ], window.pageYOffset + 1) - 1,
           current = (this.state.anchors[index] || {}).name,
-          top = Math.abs(window.pageYOffset + this.props.offset - anchorYOffsets[index]) < 1;
+          top = Math.abs(window.pageYOffset - anchorYOffsets[index]) < 1;
     if (current !== this.state.current || top !== this.state.top) {
       this.setState({ current, top });
     }
@@ -116,8 +140,7 @@ export default class Hawsehole extends React.PureComponent {
 
   connectHash() {
     const handleURLChange = () => {
-      const anchor = window.location.hash.slice(1);
-      if (anchor) this.transitionScrollTo(anchor, this.props.offset);
+      this.transitionScrollTo( window.location.hash.slice(1) );
     };
 
     handleURLChange();
@@ -157,9 +180,9 @@ export default class Hawsehole extends React.PureComponent {
             <li key={anchor.name}>
               <a
                 href={`#${anchor.name}`}
-                className={anchor.name === current ? currentClassName : '' }
+                className={anchor.name === current ? currentClassName : ''}
                 onClick={event => {
-                  this.transitionScrollTo(anchor.name, offset, hash === 'push');
+                  this.transitionScrollTo(anchor.name, true);
                   event.preventDefault();
                 }}
               >{anchor.text}</a>
