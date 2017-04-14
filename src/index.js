@@ -69,10 +69,11 @@ export default class Hawsehole extends React.PureComponent {
     if (!anchorNode) return;
 
     if (hash) {
-      if (window.history[active ? 'pushState' : 'replaceState'] != null) {
-        window.history[active ? 'pushState' : 'replaceState']({}, "", `#${name}`);
+      const push = active && hash === 'push';
+      if (window.history[push ? 'pushState' : 'replaceState'] != null) {
+        window.history[push ? 'pushState' : 'replaceState']({}, "", `#${name}`);
       } else {
-        window.location[active ? 'assign' : 'replace'](`#${name}`);
+        window.location[push ? 'assign' : 'replace'](`#${name}`);
       }
     }
 
