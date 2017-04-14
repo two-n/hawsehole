@@ -1,6 +1,6 @@
 # Hawsehole ⚓
 
-React component for navigation and transitions among named anchors. If present as children of anchors, heading levels (i.e. `h1`, `h2`, etc) determine navigation hierarchy.
+React component for navigation and transitions among named anchors. If present as children of anchors, heading levels (i.e. `h1`, `h2`, etc) determine navigation hierarchy. See [example](http://projects.two-n.com/hawsehole-demo) (and its [code](example/main.js)).
 
 `npm install --save hawsehole` (or `yarn add hawsehole`)
 
