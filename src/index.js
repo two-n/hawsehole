@@ -1,6 +1,6 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import { select, event as d3Event } from 'd3-selection';
+import { select } from 'd3-selection';
 import 'd3-transition';
 import { interpolate } from 'd3-interpolate';
 import { bisect } from 'd3-array';
@@ -57,11 +57,9 @@ export default class Hawsehole extends React.PureComponent {
     anchorRoot: { children: [] },
   }
 
-  id = Math.random()
-
-  anchorYOffset({ name }) {
-    const node = select(findDOMNode(this)).select(`a[name='${name}']`).node();
-    return node && this.props.anchorTop(node);
+  constructor(props) {
+    super(props);
+    this.handleHashchange = this.handleHashchange.bind(this);
   }
 
   transitionScrollTo(name, active = false) {
@@ -85,7 +83,7 @@ export default class Hawsehole extends React.PureComponent {
       .duration(typeof duration === 'function' ? duration(before, after) : duration)
       .delay(typeof delay === 'function' ? delay(before, after) : delay);
     if (ease) transition.ease(ease);
-    transition.tween('scroll', () => t => { window.scrollTo(0, interpolator(t)) });
+    return transition.tween('scroll', () => t => { window.scrollTo(0, interpolator(t)) });
   }
 
   handleScroll() {
@@ -129,7 +127,6 @@ export default class Hawsehole extends React.PureComponent {
       if (this.prevPageYOffset !== window.pageYOffset) this.handleScroll();
       this.prevPageYOffset = window.pageYOffset;
     });
-    if (this.props.hash) this.connectHash();
     this.findAnchors();
   }
 
@@ -138,7 +135,7 @@ export default class Hawsehole extends React.PureComponent {
     if (this.props.hash) this.disconnectHash();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     select(findDOMNode(this))
       .selectAll('a[name]')
       .classed(this.props.currentClassName, false)
@@ -146,30 +143,28 @@ export default class Hawsehole extends React.PureComponent {
       .filter(`a[name='${this.state.current}']`)
       .classed(this.props.currentClassName, true)
       .classed(this.props.topClassName, this.state.top);
+
+    if (!this.hashConnected && this.props.hash) this.connectHash();
+    else if (this.hashConnected && !this.props.hash) this.disconnectHash();
+
+    if (prevProps.children !== this.props.children) this.findAnchors();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.hash && nextProps.hash) this.connectHash();
-    else if (this.props.hash && !nextProps.hash) this.disconnectHash();
-
-    if (this.props.children !== nextProps.children) this.findAnchors();
+  hashConnected = false
+  handleHashchange(event) {
+    const transition = this.transitionScrollTo( window.location.hash.slice(1) );
+    if (transition && event) event.preventDefault();
   }
-
   connectHash() {
-    const handleURLChange = () => {
-      this.transitionScrollTo( window.location.hash.slice(1) );
-    };
-
-    handleURLChange();
-    select(window).on(`hashchange.${this.id}`, () => {
-      handleURLChange();
-      d3Event.preventDefault();
-    });
+    this.handleHashchange();
+    window.addEventListener('hashchange', this.handleHashchange);
     window.history.scrollRestoration = 'manual';
+    this.hashConnected = true;
   }
   disconnectHash() {
-    select(window).on(`hashchange.${this.id}`, null);
+    window.removeEventListener('hashchange', this.handleHashchange);
     window.history.scrollRestoration = 'auto';
+    this.hashConnected = false;
   }
 
   renderAnchors(anchors) {
