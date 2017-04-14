@@ -1,6 +1,6 @@
 # Hawsehole ⚓
 
-React component for navigation and transitions among named anchors.
+React component for navigation and transitions among named anchors. If present as children of anchors, heading levels (i.e. `h1`, `h2`, etc) determine navigation hierarchy.
 
 `npm install --save hawsehole` (or `yarn add hawsehole`)
 
@@ -42,10 +42,10 @@ render(
 ## Planned features
 
 - scrolling to anchor on demand via prop
-- optionally replacing hash with scrolled anchor, as well as clicked nav option
-- hierarchical nav corresponding to HTML heading levels if present
-- support `id`'ed elements
+- optionally replacing hash upon scrolling between anchors
+- support other tags, and attributes such as `id`
 
-## References
+## See also
 
-- `scroll-behavior: smooth;` [browser support](http://caniuse.com/#search=scroll-behavior)
+- `scroll-behavior: smooth;` [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) | [caniuse](http://caniuse.com/#feat=css-scroll-behavior) | [polyfill](https://www.npmjs.com/package/smoothscroll-polyfill)
+- [scrollNav](http://scrollnav.com/) jQuery plugin
