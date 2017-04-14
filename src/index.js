@@ -65,6 +65,9 @@ export default class Hawsehole extends React.PureComponent {
   transitionScrollTo(name, active = false) {
     const { hash, offset, duration, ease, delay } = this.props;
 
+    const anchorNode = select(findDOMNode(this)).select(`a[name='${name}']`).node();
+    if (!anchorNode) return;
+
     if (hash) {
       if (window.history[active ? 'pushState' : 'replaceState'] != null) {
         window.history[active ? 'pushState' : 'replaceState']({}, "", `#${name}`);
@@ -72,9 +75,6 @@ export default class Hawsehole extends React.PureComponent {
         window.location[active ? 'assign' : 'replace'](`#${name}`);
       }
     }
-
-    const anchorNode = select(findDOMNode(this)).select(`a[name='${name}']`).node();
-    if (!anchorNode) return;
 
     const before = window.pageYOffset,
           after = this.props.anchorTop(anchorNode),
