@@ -132,7 +132,7 @@ export default class Hawsehole extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.timer.stop();
+    this.timer && this.timer.stop();
     if (this.props.hash) this.disconnectHash();
   }
 

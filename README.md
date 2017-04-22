@@ -49,3 +49,4 @@ render(
 
 - `scroll-behavior: smooth;` [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) | [caniuse](http://caniuse.com/#feat=css-scroll-behavior) | [polyfill](https://www.npmjs.com/package/smoothscroll-polyfill)
 - [scrollNav](http://scrollnav.com/) jQuery plugin
+- Bootstrap [ScrollSpy](https://getbootstrap.com/javascript/#scrollspy)
