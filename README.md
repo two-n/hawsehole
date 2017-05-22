@@ -4,7 +4,7 @@ React component for navigation and transitions among named anchors. If present a
 
 `npm install --save hawsehole` (or `yarn add hawsehole`)
 
-All props are optional and documented [in source](src/index.js#L12-L50).
+All props are optional and documented [in source](src/index.js#L12-L53).
 
 ## Example
 

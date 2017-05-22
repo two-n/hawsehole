@@ -17,6 +17,9 @@ export default class Hawsehole extends React.PureComponent {
     // Tag or React component to wrap nav, or null for no nav
     navComponent: 'nav',
 
+    // Set to true to show anchor name in nav, instead of textContent
+    listNames: false,
+
     // Class assigned to prominent anchor in viewport, and corresponding nav li
     currentClassName: 'current',
 
@@ -171,6 +174,7 @@ export default class Hawsehole extends React.PureComponent {
   renderAnchors(anchors) {
     const {
       currentClassName,
+      listNames,
     } = this.props;
     
     const {
@@ -188,7 +192,7 @@ export default class Hawsehole extends React.PureComponent {
                 this.transitionScrollTo(anchor.name, true);
                 event.preventDefault();
               }}
-            >{ anchor.node.textContent }</a>
+            >{ listNames ? anchor.node.name : anchor.node.textContent }</a>
 
             { this.renderAnchors(anchor.children) }
           </li>

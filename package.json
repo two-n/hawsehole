@@ -1,6 +1,6 @@
 {
   "name": "hawsehole",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "React component for navigation and transitions among named anchors",
   "main": "./dist/index.js",
   "scripts": {
