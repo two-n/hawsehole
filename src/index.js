@@ -94,7 +94,7 @@ export default class Hawsehole extends React.PureComponent {
     const { anchors, current, top } = this.state,
           anchorTops = anchors.map(({ node }) => this.props.anchorTop(node)),
           end = window.pageYOffset + findDOMNode(this).getBoundingClientRect().bottom,
-          index = bisect([ ...anchorTops, end ], window.pageYOffset + 1) - 1,
+          index = bisect([ ...anchorTops, end ], window.pageYOffset + 1 - 1e-6) - 1,
           nextCurrent = (anchors[index] || {}).name,
           nextTop = Math.abs(window.pageYOffset - anchorTops[index]) < 1;
     if (nextCurrent !== current || nextTop !== top) {
